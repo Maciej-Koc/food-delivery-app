@@ -5,6 +5,8 @@ import MealItem from "./MealItem";
 
 export default function AvailableMeals(props) {
   const [meals, setMeals] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState();
 
   useEffect(() => {
     const mealArr = [];
@@ -22,7 +24,9 @@ export default function AvailableMeals(props) {
         }
         console.log("meal array", mealArr);
         setMeals(mealArr);
-      });
+        setIsLoading(false);
+      })
+      .catch((error) => setError(error.message));
 
     // empty dependency array means this effect will only run once (like componentDidMount in classes)
   }, []);
@@ -40,7 +44,12 @@ export default function AvailableMeals(props) {
   return (
     <section className={classes.meals}>
       <Card>
-        <ul>{mealsList}</ul>
+        {isLoading && !error ? (
+          <p className={classes.MealsLoading}>Loading...</p>
+        ) : (
+          <ul>{mealsList}</ul>
+        )}
+        {error && <p style={{ textAlign: "center" }}>{error}</p>}
       </Card>
     </section>
   );
